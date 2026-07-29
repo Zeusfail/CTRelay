@@ -1,0 +1,30 @@
+# Local VPS address - everyone provides their own (copy vps_config.h.example).
+vps_config.h
+
+# Build artifacts
+*.o
+*.d
+*.elf
+*.axf
+*.cxi
+*.firm
+boot.firm
+*.3gx
+*.map
+build/
+out/
+
+# The azahar source tree is only needed to *build* the room image; never vendored.
+azahar/
+
+# Container/image tarballs
+*.tar
+*.tar.gz
+
+# Local secrets / runtime
+.env
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/

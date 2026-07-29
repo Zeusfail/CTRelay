@@ -1,0 +1,40 @@
+# Azahar citra_room dedicated server (3DS "Wi-Fi local" relay) - Lot 1
+#
+# The image `azahar-room:latest` is built from the azahar source tree:
+#   docker build -f docker/azahar-room/Dockerfile -t azahar-room:latest .
+# (see build-image.sh). On the VPS you can also `docker load` a pre-built tar.
+#
+# Private room: no --token / --web-api-url is passed, so the room is NOT
+# announced on any public list. Share IP:port out of band (Discord, etc.).
+
+services:
+  citra-room:
+    image: azahar-room:latest
+    container_name: citra-room
+    restart: unless-stopped
+    env_file:
+      - .env
+    # entrypoint.sh assembles the CLI flags from the .env variables.
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh:ro
+      - room-data:/data            # holds citra-room.log and ban-list.txt
+    ports:
+      # Only this single UDP port is exposed. Nothing else is reachable.
+      - "${ROOM_PORT:-24872}:${ROOM_PORT:-24872}/udp"
+    stop_grace_period: 10s
+    # The room binds a UDP socket on ROOM_PORT; treat "socket present" as healthy.
+    healthcheck:
+      test: ["CMD-SHELL", "netstat -an -u | grep -q ':${ROOM_PORT:-24872} ' || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  room-data:

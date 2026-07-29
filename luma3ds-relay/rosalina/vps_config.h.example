@@ -1,0 +1,12 @@
+// Copy this file to vps_config.h and point it at your own room server.
+// vps_config.h is gitignored so your server address never lands in the repo.
+#pragma once
+
+// IPv4 of the VPS running the citra_room + shim, as four octets.
+#define VPS_IP_A 203
+#define VPS_IP_B 0
+#define VPS_IP_C 113
+#define VPS_IP_D 10
+
+// UDP port the shim listens on (relay <-> shim link, not the room's ENet port).
+#define VPS_PORT 24873

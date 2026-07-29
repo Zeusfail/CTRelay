@@ -1,0 +1,3 @@
+# Store text as LF and check it out as LF everywhere. The shell scripts and the
+# shim run on Linux, so they must stay LF even when cloned on Windows.
+* text=auto eol=lf

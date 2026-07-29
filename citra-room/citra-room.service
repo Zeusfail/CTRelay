@@ -1,0 +1,29 @@
+# systemd unit for the Azahar citra_room dedicated server.
+#
+# Install to /etc/systemd/system/citra-room.service (deploy.sh does this),
+# then:
+#   systemctl daemon-reload
+#   systemctl enable --now citra-room.service
+#
+# Uses Type=oneshot + RemainAfterExit so systemd brings the stack up at boot;
+# per-container crash resilience is handled by `restart: unless-stopped` in
+# docker-compose.yml. Assumes the deploy files live in /opt/citra-room.
+
+[Unit]
+Description=Azahar citra_room dedicated server (3DS local-play relay)
+Documentation=https://github.com/azahar-emu/azahar
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/citra-room
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+ExecStop=/usr/bin/docker compose down
+ExecReload=/usr/bin/docker compose up -d --force-recreate
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

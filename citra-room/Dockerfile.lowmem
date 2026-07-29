@@ -1,0 +1,34 @@
+# Low-memory variant of azahar's docker/azahar-room/Dockerfile.
+# Mirrors upstream, but makes the ninja job count configurable so the C++
+# build fits on machines with limited RAM (each compile job can need ~1-2 GB).
+#
+# Build from the azahar source ROOT (build-image.sh --jobs N does this):
+#   docker build -f Dockerfile.lowmem --build-arg NINJA_JOBS=2 -t azahar-room:latest /path/to/azahar
+
+# --- Builder ----------------
+FROM opensauce04/azahar-build-environment:latest AS builder
+
+# Parallel compile jobs. Rule of thumb: ~1 job per 1.5-2 GB of RAM.
+ARG NINJA_JOBS=2
+
+RUN mkdir /var/azahar-src/
+COPY ./ /var/azahar-src/
+
+RUN mkdir /builddir
+WORKDIR /builddir
+RUN cmake /var/azahar-src -G Ninja \
+                          -DENABLE_QT=OFF \
+                          -DENABLE_GDBSTUB=OFF \
+                          -DENABLE_TESTS=OFF \
+                          -DENABLE_ROOM=ON \
+                          -DENABLE_ROOM_STANDALONE=ON
+RUN ninja -j ${NINJA_JOBS}
+RUN mv ./bin/Release/azahar-room /usr/local/bin/
+
+# --- Final ------------------
+FROM debian:trixie AS final
+
+RUN apt-get update && apt-get -y full-upgrade
+RUN apt-get install -y iputils-ping net-tools
+
+COPY --from=builder /usr/local/bin/azahar-room /usr/local/bin/azahar-room
