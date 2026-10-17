@@ -241,3 +241,11 @@ source and update the version sent in `shim/room_shim.cpp` and the JoinRequest.
 Copyright (C) 2026 CTRelay contributors. Licensed under **GPLv3** - see
 [LICENSE](LICENSE). The parts that modify or link Luma3DS are derivative works
 of Luma3DS and remain under its GPLv3 terms.
+
+---
+
+## AI disclosure
+
+[![AI assistance: level 3/5](https://img.shields.io/badge/AI_assistance-level_3%2F5-blue)](https://github.com/Zeusfail/Zeusfail/blob/main/AI-CHARTER.md)
+
+Built with AI assistance (Claude Opus 4.5, level 3/5). The AI wrote the initial structure and the first draft of the code; the reverse engineering and the fixes to the problems encountered are mine. Reviewed and validated by Zayla (Zeusfail). Details: [AI transparency charter](https://github.com/Zeusfail/Zeusfail/blob/main/AI-CHARTER.md) (in French).
